@@ -25,10 +25,11 @@ const upload = multer({
      */
     fileFilter: (req, file, cb) => {
         // Define the allowed file types using a regular expression
-        const fileTypes = /jpg|png|mp4|gif/;
+        const fileTypes = /jpg|png|mp4|gif|jpeg/;
         const mimeType = fileTypes.test(file.mimetype);
         const extName = fileTypes.test(path.extname(file.originalname));
 
+        // console.log(file.mimetype, mimeType, extName);
         if (mimeType && extName) {
             return cb(null, true);
         }

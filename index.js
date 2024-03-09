@@ -5,7 +5,7 @@ const productsRouter = require("./routes/productsRouter");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static("public"));
+app.use(express.static("content"));
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/products", productsRouter);
