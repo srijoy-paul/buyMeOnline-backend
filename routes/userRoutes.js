@@ -14,18 +14,18 @@ router.post("/signup", async (req, res) => {
         const existingUser = await pool.query('SELECT * FROM userinfo WHERE email=$1', [email]);
         // console.log("fetching from DB", existingUser.rows);
         if (existingUser.rows.length !== 0) {
-            return res.status(403).json({ err: "user already exists" });
+            return res.status(403).json({ status: "err", message: "user already exists, Please try another email." });
         }
         console.log("no existingUser");
 
         if (!validateName(name)) {
-            return res.status(403).json({ err: "user name validation failed" });
+            return res.status(403).json({ status: "err", message: "user name validation failed" });
         }
         if (!validateEmail(email)) {
-            return res.status(403).json({ err: "user email validation failed" });
+            return res.status(403).json({ status: "err", message: "user email validation failed" });
         }
         if (!validatePassword(password)) {
-            return res.status(403).json({ err: "user password requirement validation failed" });
+            return res.status(403).json({ status: "err", message: "user password requirement validation failed" });
         }
 
         let hashedPassword = await bcrypt.hash(password, 10);
@@ -41,7 +41,7 @@ router.post("/signup", async (req, res) => {
         const createdUser = await pool.query('INSERT INTO userinfo(name,email,password,isSeller) VALUES($1,$2,$3,$4) RETURNING *', [newUser.name, newUser.email, newUser.password, newUser.isSeller]);
         console.log(">>", createdUser.rows[0]);
 
-        return res.status(201).json({ message: `Welcome! ${newUser.name}` });
+        return res.status(201).json({ status: "ok", message: `Welcome! ${newUser.name}`, createdUser: newUser });
 
     } catch (error) {
         return res.status(500).send(e);
@@ -50,25 +50,25 @@ router.post("/signup", async (req, res) => {
 
 router.post("/signin", async (req, res) => {
     try {
-        //after checking the credentials exists or not, if exists then generate JWT token(we call it bearer token and we need an secrect message/password whatever we can call, it is used for encryption and decryption and this also have an expiry time)(it is encrypting the userid) for the user id only(using this we can query from DB), and then we send it to the client and set it in their cookie storage(reason behind using cookie is that DB can also access cookie, where DB cannot access localstorage, sessionstorage ), so it means they are authorized to access rest of the website.
+        //after checking the credentials exists or not, if exists then generate JWT token(we call it bearer token and we need an secrect message/password whatever we can call, it is used for encryption and decryption and this also have an expiry time)(it is encrypting the bbject which contains the userid) for the user id only(using this we can query from DB), and then we send it to the client and set it in their cookie storage(reason behind using cookie is that Backend(server code) can also access cookie, where it cannot access localstorage, sessionstorage ), so it means they are authorized to access rest of the website pages.
         const { email, password } = req.body;
         if (email.length === 0) {
-            return res.status(400).json({ err: "Please provide an email" })
+            return res.status(422).json({ status: "err", message: "Please provide an email" })
         }
         if (password.length === 0) {
-            return res.status(400).json({ err: "Please provide a password" })
+            return res.status(422).json({ status: "err", message: "Please provide a password" })
         }
 
         const existingUser = await pool.query('SELECT * FROM userinfo WHERE email=$1', [email]);
         console.log(existingUser.rows[0]);
         if (existingUser.rows.length === 0) {
-            return res.status(404).json({ err: "User not found." })
+            return res.status(404).json({ status: "err", message: "User not found." })
         }
 
         const isPasswordMatching = await bcrypt.compare(password, existingUser.rows[0].password);
 
         if (!isPasswordMatching) {
-            return res.status(400).json({ err: "email or password mismatch" });
+            return res.status(400).json({ status: "err", message: "email or password mismatch" });
         }
 
         const payload = { user: { id: existingUser.rows[0].id } };
@@ -77,12 +77,12 @@ router.post("/signin", async (req, res) => {
             expiresIn: 360000
         });
 
-        res.cookie('bt', bearerToken, { expire: new Date() + 9889 });
+        res.cookie('bt', bearerToken, { expire: new Date(Date.now() + 360000) });
         return res.status(200).json({ bearer: bearerToken })
     } catch (error) {
         return res.status(500).send(e);
     }
-})
+});
 
 router.get("/signout", async (req, res) => {
     try {
