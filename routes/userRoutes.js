@@ -73,14 +73,22 @@ router.post("/signin", async (req, res) => {
 
         const payload = { user: { id: existingUser.rows[0].id } };
 
-        const bearerToken = jwt.sign(payload, "The door slammed on the watermelon", {
-            expiresIn: 360000
+        const bearerToken = jwt.sign(payload, process.env.SECRECT_MSSG, {
+            expiresIn: 360000,
         });
+        console.log("after getting bearer token", bearerToken);
 
-        res.cookie('bt', bearerToken, { expire: new Date(Date.now() + 360000) });
+        res.cookie('bt', bearerToken, {
+            expires: new Date(Date.now() + 360000),
+            domain: "localhost",
+            secure: "false"
+            // path: "/"
+        });
+        // console.log("executed");
         return res.status(200).json({ bearer: bearerToken })
     } catch (error) {
-        return res.status(500).send(e);
+        console.log(error);
+        return res.status(500).send(error);
     }
 });
 

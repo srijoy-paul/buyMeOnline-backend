@@ -3,19 +3,20 @@ const jwt = require("jsonwebtoken");
 const isAuthenticated = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
+        console.log("authheader", authHeader);
 
         if (!authHeader) {
             return res.status(401).json({ err: "You don't have authorization to access further." })
         };
 
         const token = authHeader.split(" ")[1];
-        console.log(token);
+        console.log("token", token);
 
         if (!token) {
             return res.status(401).json({ err: "You are not authorized to access" });
         };
 
-        const decoded = jwt.verify(token, "The door slammed on the watermelon");
+        const decoded = jwt.verify(token, process.env.SECRECT_MSSG);
 
         const { user: { id } } = decoded;
         // console.log(id);

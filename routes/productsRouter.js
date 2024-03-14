@@ -61,8 +61,9 @@ router.post("/create", isAuthenticated, isSeller, async (req, res) => {
 router.get("/get/all", isAuthenticated, async (req, res) => {
     try {
         const allProducts = await pool.query("SELECT * FROM products ORDER BY id");
-        console.log(allProducts.rows);
-        res.status(200).json({ allProducts });
+        const buyedProducts = await pool.query("SELECT * FROM orders");
+        console.log("boughtproducts", buyedProducts.rows);
+        res.status(200).json({ allProducts: allProducts.rows, boughtProducts: buyedProducts.rows });
     } catch (error) {
         console.log(error);
         res.status(500).send(error);
@@ -104,7 +105,7 @@ router.post("/buy/:productId", isAuthenticated, isBuyer, async (req, res) => {
         // if (!paymentMethod) {
         //     return res.status(400).json({ err: "Payment method creation failed" });
         // }
-        //this is the actual interaction with the stripe servers regarding the payments
+        //this is the actual interaction with the stripe servers regarding the payments👇🏻
         let paymentIntent = await stripe.paymentIntents.create({
             amount: product.rows[0].price,
             currency: "inr",
