@@ -21,5 +21,5 @@ describe("Testing Validators", () => {
     });
     it("should return false for invalid password", () => {
         expect(validatePassword("knoxsecuwity")).to.equal(false);
-    })
+    });
 })
