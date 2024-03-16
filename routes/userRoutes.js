@@ -60,7 +60,7 @@ router.post("/signin", async (req, res) => {
         }
 
         const existingUser = await pool.query('SELECT * FROM userinfo WHERE email=$1', [email]);
-        console.log(existingUser.rows[0]);
+        console.log("signedin user from backend", existingUser.rows[0]);
         if (existingUser.rows.length === 0) {
             return res.status(404).json({ status: "err", message: "User not found." })
         }
@@ -84,8 +84,8 @@ router.post("/signin", async (req, res) => {
             secure: "false"
             // path: "/"
         });
-        // console.log("executed");
-        return res.status(200).json({ bearer: bearerToken })
+        console.log("executed", existingUser.rows[0]);
+        return res.status(200).json({ signedInUser: existingUser.rows[0], bearer: bearerToken });
     } catch (error) {
         console.log(error);
         return res.status(500).send(error);
@@ -94,9 +94,11 @@ router.post("/signin", async (req, res) => {
 
 router.get("/signout", async (req, res) => {
     try {
-        res.clearCookie('bt');
-        return res.status(200).json({ message: "cookie deleted" });
+        res.clearCookie('BearerToken');
+        // console.log;
+        return res.status(200).json({ status: "ok", message: "cookie deleted" });
     } catch (error) {
+        console.log(error);
         res.status(500).send(error);
     }
 });

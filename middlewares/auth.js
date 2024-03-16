@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const isAuthenticated = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        console.log("authheader", authHeader);
+        // console.log("authheader", authHeader);
 
         if (!authHeader) {
             return res.status(401).json({ err: "You don't have authorization to access further." })
