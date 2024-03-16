@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  title: buyMeOnline
+  description: Completed project with file upload, payment gateway, unit testing and swagger docs
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api/v1/user
+    description:
+      Api url to handle user authentications
+      # - url: http://localhost:3000/api/v1/user/signup
+      #   description: Url to handle signup
+  - url: http://localhost:3000/api/v1/products
+    description: Api url to manage the products - create, buy, display all products
+
+paths:
+  /signup:
+    post:
+      summary: creates a new user
+      responses:
+        "201": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  createdUser:
+                    type: object

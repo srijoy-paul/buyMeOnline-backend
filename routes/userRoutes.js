@@ -85,6 +85,7 @@ router.post("/signin", async (req, res) => {
             // path: "/"
         });
         console.log("executed", existingUser.rows[0]);
+
         return res.status(200).json({ signedInUser: existingUser.rows[0], bearer: bearerToken });
     } catch (error) {
         console.log(error);
