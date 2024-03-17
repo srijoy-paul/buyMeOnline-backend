@@ -9,19 +9,44 @@ info:
 
 servers:
   - url: http://localhost:3000/api/v1/user
-    description:
-      Api url to handle user authentications
-      # - url: http://localhost:3000/api/v1/user/signup
-      #   description: Url to handle signup
+    description: Api url to handle user authentications
+
   - url: http://localhost:3000/api/v1/products
     description: Api url to manage the products - create, buy, display all products
 
 # apis: ["./routes/*.js"]
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
 paths:
   /signup:
     post:
       summary: creates a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Tido Paul"
+                email:
+                  type: string
+                  example: "tidopaul1507@gmail.com"
+                password:
+                  type: string
+                  example: "Mybill7cherod@sheorm"
+                isSeller:
+                  type: boolean
+                  example: true
+
       responses:
         "201": # status code
           description: returns an object
@@ -39,6 +64,19 @@ paths:
   /signin:
     post:
       summary: logs in an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "tidopaul1507@gmail.com"
+                password:
+                  type: string
+                  example: "Mybill7cherod@sheorm"
       responses:
         "200": # status code
           description: returns an object
@@ -69,10 +107,12 @@ paths:
   /create:
     post:
       summary: add a new product
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -82,6 +122,10 @@ paths:
                 price:
                   type: number
                   example: 60
+                content:
+                  type: string
+                  format:
+                  example: ""
       responses:
         "200": # status code
           description: returns an object
@@ -104,6 +148,8 @@ paths:
   /get/all:
     get:
       summary: display all products
+      security:
+        - bearerAuth: []
       responses:
         "200": # status code
           description: returns an object
@@ -124,6 +170,8 @@ paths:
   /buy/{productId}:
     post:
       summary: display a product with it's id
+      security:
+        - bearerAuth: []
       parameters:
         - in: path
           name: productId

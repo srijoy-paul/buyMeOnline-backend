@@ -17,6 +17,8 @@ const productsRouter = require("./routes/productsRouter");
 //     }
 // })
 // const file = require("./swagger.yaml");
+
+//swagger setup
 const file = fs.readFileSync('./swagger.yaml', 'utf8')
 const swaggerDocument = YAML.parse(file)
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
