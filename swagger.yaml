@@ -1,8 +1,11 @@
 openapi: 3.0.0
 info:
-  title: buyMeOnline
+  title: buyMeOnline - photo/video store api
   description: Completed project with file upload, payment gateway, unit testing and swagger docs
   version: 1.0.0
+  contact:
+    email: srijoykumar1507@gmail.com
+    url: https://github.com/srijoy-paul
 
 servers:
   - url: http://localhost:3000/api/v1/user
@@ -12,6 +15,8 @@ servers:
       #   description: Url to handle signup
   - url: http://localhost:3000/api/v1/products
     description: Api url to manage the products - create, buy, display all products
+
+# apis: ["./routes/*.js"]
 
 paths:
   /signup:
@@ -30,4 +35,109 @@ paths:
                   message:
                     type: string
                   createdUser:
+                    type: object
+  /signin:
+    post:
+      summary: logs in an existing user
+      responses:
+        "200": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedInUser:
+                    type: object
+                  bearer:
+                    type: string
+  /signout:
+    get:
+      summary: logs out an existing user
+      responses:
+        "200": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+  /create:
+    post:
+      summary: add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Sticky Notes"
+                price:
+                  type: number
+                  example: 60
+      responses:
+        "200": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  productDetails:
+                    type: object
+                    example:
+                      {
+                        name: "Dell Inspiron 15",
+                        price: "60000",
+                        content: "14789999.jpeg",
+                      }
+  /get/all:
+    get:
+      summary: display all products
+      responses:
+        "200": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  allProducts:
+                    type: array
+                    items:
+                      type: object
+
+                  boughtProducts:
+                    type: array
+                    items:
+                      type: object
+  /buy/{productId}:
+    post:
+      summary: display a product with it's id
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: integer
+          required: true
+          description: Numeric id to uniquely identify the product
+      responses:
+        "200": # status code
+          description: returns an object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createOrder:
                     type: object
